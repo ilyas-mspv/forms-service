@@ -1,0 +1,8 @@
+app:
+  name: 'forms'
+  version: '1.0.0'
+  description: 'Forms'
+http:
+  port: 8080
+db:
+  url: "postgresql://postgres:postgres@localhost:5432/forms?sslmode=disable"

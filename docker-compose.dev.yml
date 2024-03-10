@@ -13,7 +13,21 @@ services:
       - db:/var/lib/postgresql/data/
     ports:
       - 5432:5432
+    networks:
+      - conn
 
-
+  app:
+    build: .
+    container_name: forms-app
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - conn
 volumes:
   db:
+
+networks:
+  conn:
+    driver: bridge

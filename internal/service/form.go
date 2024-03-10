@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"forms/internal/models"
+	"forms/internal/storage"
 )
 
 type FormRepository interface {
@@ -24,7 +26,11 @@ func (u *FormUseCase) GetAllForms(ctx context.Context) ([]*models.Form, error) {
 }
 
 func (u *FormUseCase) CreateForm(ctx context.Context, form *models.Form) (int64, error) {
-	return u.repository.CreateForm(ctx, form)
+	_, err := u.repository.Form(ctx, form.Identifier)
+	if errors.Is(err, storage.ErrNotFound) {
+		return u.repository.CreateForm(ctx, form)
+	}
+	return 0, storage.ErrAlreadyExists
 }
 
 func (u *FormUseCase) Form(ctx context.Context, identifier string) (*models.Form, error) {

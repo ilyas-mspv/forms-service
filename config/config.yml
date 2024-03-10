@@ -2,6 +2,7 @@ app:
   name: 'forms'
   version: '1.0.0'
   description: 'Forms'
+  env: 'local'
 http:
   port: 8080
 db:

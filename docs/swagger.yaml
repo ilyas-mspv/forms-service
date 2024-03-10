@@ -1,0 +1,97 @@
+basePath: /v1
+definitions:
+  models.Form:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      identifier:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  v1.formRequest:
+    properties:
+      description:
+        type: string
+      identifier:
+        type: string
+      name:
+        type: string
+    type: object
+  v1.formResponse:
+    properties:
+      forms:
+        items:
+          $ref: '#/definitions/models.Form'
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Forms API
+  title: Forms
+  version: "1.0"
+paths:
+  /form:
+    post:
+      consumes:
+      - application/json
+      description: Create new form
+      operationId: create-form
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.formRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      summary: Create new form
+      tags:
+      - form
+  /form/all:
+    get:
+      consumes:
+      - application/json
+      description: Show all forms without details
+      operationId: form
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.formResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      summary: Show all forms
+      tags:
+      - form
+swagger: "2.0"

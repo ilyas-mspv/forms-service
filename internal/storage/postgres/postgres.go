@@ -2,8 +2,11 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"forms/internal/models"
+	storage "forms/internal/storage"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -42,22 +45,21 @@ func (s *Storage) GetAll(ctx context.Context) ([]*models.Form, error) {
 
 func (s *Storage) CreateForm(ctx context.Context, form *models.Form) (int64, error) {
 	const op = "storage.postgres.StoreForm"
-	res, err := s.db.ExecContext(ctx, "INSERT INTO form (name, identifier, description) VALUES ($1, $2, $3)", form.Name, form.Identifier, form.Description)
+	var id int64
+	err := s.db.QueryRowContext(ctx, "INSERT INTO form (name, identifier, description) VALUES ($1, $2, $3) RETURNING id", form.Name, form.Identifier, form.Description).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("%s: %w", op, err)
-	}
-	return id, nil
+	return id, err
 }
 
 func (s *Storage) Form(ctx context.Context, identifier string) (*models.Form, error) {
 	const op = "storage.postgres.Form"
 	form := &models.Form{}
 	err := s.db.GetContext(ctx, form, "SELECT * FROM form WHERE identifier = $1", identifier)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, fmt.Errorf("%s: %w", op, storage.ErrNotFound)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}

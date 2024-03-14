@@ -6,4 +6,4 @@ app:
 http:
   port: 8080
 db:
-  url: "postgresql://postgres:postgres@localhost:5432/forms?sslmode=disable"
+  url: "postgresql://postgres:postgres@forms-db:5432/forms?sslmode=disable"

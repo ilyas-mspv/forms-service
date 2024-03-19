@@ -3,6 +3,7 @@ version: '3.1'
 services:
   db:
     image: postgres:15
+    container_name: forms-db
     restart: always
     environment:
       POSTGRES_USER: postgres

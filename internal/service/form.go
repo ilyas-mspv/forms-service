@@ -22,7 +22,12 @@ func New(repository FormRepository) *FormUseCase {
 }
 
 func (u *FormUseCase) GetAllForms(ctx context.Context) ([]*models.Form, error) {
-	return u.repository.GetAll(ctx)
+
+	forms, err := u.repository.GetAll(ctx)
+	if err != nil {
+		return nil, storage.ErrDefault
+	}
+	return forms, nil
 }
 
 func (u *FormUseCase) CreateForm(ctx context.Context, form *models.Form) (int64, error) {
@@ -34,5 +39,9 @@ func (u *FormUseCase) CreateForm(ctx context.Context, form *models.Form) (int64,
 }
 
 func (u *FormUseCase) Form(ctx context.Context, identifier string) (*models.Form, error) {
-	return u.repository.Form(ctx, identifier)
+	form, err := u.repository.Form(ctx, identifier)
+	if err != nil {
+		return nil, storage.ErrDefault
+	}
+	return form, nil
 }
